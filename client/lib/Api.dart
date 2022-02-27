@@ -19,8 +19,15 @@ Future postRoot() async {
   // return {"name": "Elden Ring"};
 }
 
-Future getNotes(String id) async {
-  final response = await _dio.get('/note/' + id,
+Future getNotes() async {
+  final response = await _dio.get('/notes',
+      queryParameters: {},
+      options: Options(headers: {'Content-Type': 'application/json'}));
+  return response.data;
+}
+
+Future getChildren(String id) async {
+  final response = await _dio.get('/notes/' + id,
       queryParameters: {},
       options: Options(headers: {'Content-Type': 'application/json'}));
   return response.data;
@@ -35,7 +42,7 @@ Future getNote(String id) async {
 
 Future postNote(Map _data) async {
   final response = await _dio.post('/note/' + _data['_id'],
-      data: _data,
+      data: {},
       options: Options(headers: {'Content-Type': 'application/json'}));
   return response.data;
 }

@@ -17,7 +17,10 @@ final _router = Router()
   ..post('/root', Root.post)
   ..delete('/root', Root.delete)
   //Notes
-  ..get('/notes', Note.get)
+  ..get('/notes', Note.getAll)
+  ..get('/notes/<id>', Note.getChildren)
+  ..delete('/notes', Note.deleteAll)
+  //Note
   ..get('/note/<id>', Note.getId)
   ..post('/note/<id>', Note.postId)
   ..put('/note/<id>', Note.putId)

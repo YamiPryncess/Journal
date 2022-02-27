@@ -35,8 +35,9 @@ class _HomeState extends State<Home> {
 
   newRoot() {
     postRoot().then((data) {
-      //Post is successful but root var isn't updated correctly yet.
-      root = data ?? {}; //I'll focus on it later. todo
+      setState(() {
+        root = data ?? {};
+      });
     }).catchError((error) => print(error));
   }
 
@@ -76,6 +77,7 @@ class _HomeState extends State<Home> {
                   : (root.isNotEmpty
                       ? NoteView(
                           noteData: root,
+                          replace: false,
                         )
                       : Rootless(newRoot: newRoot)),
             ),

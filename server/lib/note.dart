@@ -5,7 +5,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:server/connectdb.dart';
 
 class Note {
-  static Future<Response> get(Request req) async {
+  static Future<Response> getAll(Request req) async {
     var data = {};
     int i = 0;
     await for (final val in notes.find()) {
@@ -13,6 +13,25 @@ class Note {
       i++;
     }
     return Response.ok(jsonEncode(data),
+        headers: {'Content-Type': 'application/json'});
+  }
+
+  static Future<Response> getChildren(Request req, String parentId) async {
+    var data = {};
+    int i = 0;
+    await for (final val in notes.find(where.eq('parent', parentId))) {
+      print(val);
+      data[i.toString()] = val;
+      i++;
+    }
+    print(data);
+    return Response.ok(jsonEncode(data),
+        headers: {'Content-Type': 'application/json'});
+  }
+
+  static Future<Response> deleteAll(Request req) async {
+    var result = await notes.deleteMany(where.exists('_id'));
+    return Response.ok(result.toString(),
         headers: {'Content-Type': 'application/json'});
   }
 
@@ -33,10 +52,10 @@ class Note {
     toAdd["title"] = "";
     toAdd["entry"] = "";
     toAdd["progress"] = {"complete": false, "deaths": 0};
-    await notes.insertOne(toAdd);
-    var childNote = await notes
-        .findOne(where.eq('title', toAdd['title']))
-        .then((futureNote) {
+    var result = await notes.insertOne(toAdd);
+    //print(result.document); //The code will use result.document in the future.
+    var childNote =
+        await notes.findOne(where.eq('_id', result.id)).then((futureNote) {
       notes.update(where.eq('_id', ObjectId.fromHexString(parentId)),
           modify.push("children", futureNote?["_id"]));
       return futureNote;

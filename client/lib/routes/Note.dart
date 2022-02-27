@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:client/utils/Helper.dart';
 import 'package:client/Api.dart';
 
+import 'package:client/routes/Children.dart';
+
 class Note extends StatefulWidget {
   Note({Key? key, required this.data}) : super(key: key);
   Map<String, dynamic> data;
@@ -17,10 +19,12 @@ class _NoteState extends State<Note> {
   @override
   void initState() {
     super.initState();
-    print(widget.data);
+    //print(widget.data);
     if (widget.data.containsKey("parent")) {
       getNote(widget.data['parent']).then((data) {
-        parent = data;
+        setState(() {
+          parent = data;
+        });
       }).catchError((error) => print(error));
     }
   }
@@ -40,11 +44,25 @@ class _NoteState extends State<Note> {
       drawer: const Drawer(child: Text("Journal")),
       appBar: AppBar(
         titleSpacing: 10,
-        title: TextField(
-          controller: titleController,
-          onChanged: (str) {
-            widget.data['title'] = str;
-          },
+        title: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Container(
+            margin: const EdgeInsets.only(top: 25.0),
+            child: TextField(
+              maxLength: 100,
+              decoration: InputDecoration(
+                fillColor: Colors.white,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
+              controller: titleController,
+              onChanged: (str) {
+                widget.data['title'] = str;
+              },
+            ),
+          ),
         ),
         actions: [
           IconButton(
@@ -69,7 +87,9 @@ class _NoteState extends State<Note> {
             Expanded(
               flex: 4,
               child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   style: OutlinedButton.styleFrom(
                       backgroundColor: Colors.amber,
                       shape: const RoundedRectangleBorder(
@@ -90,7 +110,14 @@ class _NoteState extends State<Note> {
                       style: TextStyle(color: Colors.white))),
             ),
             OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  postNote(widget.data).then((result) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Note(data: result)));
+                  }).catchError((error) => print(error));
+                },
                 style: OutlinedButton.styleFrom(
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero),
@@ -101,7 +128,12 @@ class _NoteState extends State<Note> {
                   color: Colors.white,
                 )),
             OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Children(parent: widget.data)));
+                },
                 style: OutlinedButton.styleFrom(
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero),
@@ -118,11 +150,22 @@ class _NoteState extends State<Note> {
         Expanded(
             child: Container(
                 alignment: Alignment.topLeft,
-                child: TextField(
-                  onChanged: (str) {
-                    widget.data['entry'] = str;
-                  },
-                  controller: entryController,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.black, width: 2.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    onChanged: (str) {
+                      widget.data['entry'] = str;
+                    },
+                    controller: entryController,
+                  ),
                 ))),
         LimitedBox(
             maxWidth: Helper.clamp(progressRatio, 150, 120),
