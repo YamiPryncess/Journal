@@ -59,7 +59,9 @@ class _NoteState extends State<Note> {
               ),
               controller: titleController,
               onChanged: (str) {
-                widget.data['title'] = str;
+                setState(() {
+                  widget.data['title'] = str;
+                });
               },
             ),
           ),
@@ -162,7 +164,9 @@ class _NoteState extends State<Note> {
                       ),
                     ),
                     onChanged: (str) {
-                      widget.data['entry'] = str;
+                      setState(() {
+                        widget.data['entry'] = str;
+                      });
                     },
                     controller: entryController,
                   ),
