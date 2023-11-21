@@ -1,7 +1,10 @@
 # Journal
 Note taking app where each note can have child notes making a note tree.
+
 ● Generated an editable note tree via Mongo & Shelf.
+
 ● Traverses, creates, & updates notes via flutter & dio.
+
 ● Showed alternate content if no streamable notes were found.
 
 This was made for video game note taking but can be changed to work with anything. The tasks feature that appears on the right side of the note will become modular in the future.
